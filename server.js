@@ -1,19 +1,51 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const app = express();
 const PORT = process.env.PORT || 7860;
 
-// A simple API route returning data for the CleanSync app
-app.get('/api/services', (req, res) => {
-    res.json({
-        success: true,
-        data: [
-            { id: 1, name: "Standard Home Cleaning", price: 50 },
-            { id: 2, name: "Deep Carpet Cleaning", price: 120 },
-            { id: 3, name: "Move-in/Move-out Scrub", price: 200 }
-        ]
-    });
+// Middleware to allow our API to read JSON data sent from your Flutter app
+app.use(express.json());
+
+// 1. Securely connect to MongoDB Atlas
+const MONGO_URI = process.env.MONGO_URI;
+
+mongoose.connect(MONGO_URI)
+    .then(() => console.log('✅ Connected to MongoDB Atlas!'))
+    .catch(err => console.error('❌ MongoDB connection error:', err));
+
+// 2. Define the Blueprint (Schema) for a Cleaning Service
+const serviceSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    price: { type: Number, required: true }
+});
+
+const Service = mongoose.model('Service', serviceSchema);
+
+// 3. GET Route: Fetch all live services from the database
+app.get('/api/services', async (req, res) => {
+    try {
+        const services = await Service.find();
+        res.json({ success: true, data: services });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server Error" });
+    }
+});
+
+// 4. POST Route: Allow an admin app to add a new service
+app.post('/api/services', async (req, res) => {
+    try {
+        const newService = await Service.create(req.body);
+        res.status(201).json({ success: true, data: newService });
+    } catch (error) {
+        res.status(400).json({ success: false, message: "Invalid Data" });
+    }
+});
+
+// 5. Fix the "Cannot GET /" error with a friendly homepage
+app.get('/', (req, res) => {
+    res.send('CleanSync Enterprise API is Online and connected to MongoDB!');
 });
 
 app.listen(PORT, () => {
-    console.log(`CleanSync API is running on http://localhost:${PORT}`);
+    console.log(`CleanSync API is running on port ${PORT}`);
 });
