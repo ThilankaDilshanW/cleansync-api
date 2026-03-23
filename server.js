@@ -1,9 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 7860;
 
 // Middleware to allow our API to read JSON data sent from your Flutter app
+app.use(cors());
 app.use(express.json());
 
 // 1. Securely connect to MongoDB Atlas
