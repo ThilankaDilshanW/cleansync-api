@@ -1,5 +1,5 @@
 # 1. Choose the base environment (a lightweight Linux machine with Node.js installed)
-FROM node:18-alpine
+FROM node:20-alpine
 
 # 2. Set the working directory inside the container
 WORKDIR /app
