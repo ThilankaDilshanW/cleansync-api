@@ -18,4 +18,4 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         # IMPORTANT: Replace 'your-hf-username' with your actual Hugging Face username in the two spots below!
-        run: git push --force https://your-hf-username:$HF_TOKEN@huggingface.co/spaces/your-hf-username/cleansync-api main
+        run: git push --force https://ThilankaD:$HF_TOKEN@huggingface.co/spaces/Dilshan415/cleansync-api main
