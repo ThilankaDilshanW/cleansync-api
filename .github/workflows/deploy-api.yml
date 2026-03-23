@@ -1,37 +1,21 @@
-name: Build and Push Docker Image
+name: Deploy API to Cloud
 
-# 1. This tells GitHub to run the pipeline every time you push to the 'main' branch
 on:
   push:
     branches:
       - main
 
 jobs:
-  build-and-push-container:
+  deploy-to-huggingface:
     runs-on: ubuntu-latest
-    
-    # 2. These permissions allow GitHub Actions to save the image to your repository's registry
-    permissions:
-      contents: read
-      packages: write
-
     steps:
-      # 3. Downloads your code into the GitHub Actions runner
       - name: Checkout Code
         uses: actions/checkout@v4
-
-      # 4. Logs securely into the GitHub Container Registry
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
-      # 5. Reads your Dockerfile, builds the image, and pushes it to GHCR
-      - name: Build and Push Docker Image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ghcr.io/thilankadilshanw/cleansync-api:latest
+      - name: Push Container to Hugging Face
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        # IMPORTANT: Replace 'your-hf-username' with your actual Hugging Face username in the two spots below!
+        run: git push --force https://your-hf-username:$HF_TOKEN@huggingface.co/spaces/your-hf-username/cleansync-api main

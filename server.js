@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 7860;
 
 // A simple API route returning data for the CleanSync app
 app.get('/api/services', (req, res) => {
