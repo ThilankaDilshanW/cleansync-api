@@ -1,0 +1,37 @@
+name: Build and Push Docker Image
+
+# 1. This tells GitHub to run the pipeline every time you push to the 'main' branch
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push-container:
+    runs-on: ubuntu-latest
+    
+    # 2. These permissions allow GitHub Actions to save the image to your repository's registry
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      # 3. Downloads your code into the GitHub Actions runner
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 4. Logs securely into the GitHub Container Registry
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # 5. Reads your Dockerfile, builds the image, and pushes it to GHCR
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/thilankadilshanw/cleansync-api:latest
