@@ -27,7 +27,9 @@ app.get('/api/services', async (req, res) => {
         const services = await Service.find();
         res.json({ success: true, data: services });
     } catch (error) {
-        res.status(500).json({ success: false, message: "Server Error" });
+        console.error("Database Error:", error); // Logs to Hugging Face terminal
+        // Expose the exact error message to the web browser
+        res.status(500).json({ success: false, message: "Server Error", details: error.message });
     }
 });
 
